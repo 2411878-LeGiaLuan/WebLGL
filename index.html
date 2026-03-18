@@ -1,1 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Ba Kính Yêu</title>
+    <style>
+        body {
+            margin: 0; padding: 0; 
+            background-color: #000; 
+            color: #d4af37; 
+            font-family: 'Arial', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+        .container {
+            text-align: center; width: 90%; max-width: 500px;
+            padding: 40px 20px; border: 2px solid #d4af37; border-radius: 20px;
+            background: rgba(15, 15, 15, 0.95);
+            box-shadow: 0 0 30px rgba(212, 175, 85, 0.2);
+        }
+        input {
+            padding: 15px; width: 80%; margin: 25px 0;
+            border-radius: 10px; border: 1px solid #d4af37;
+            background: #000; color: #fff; text-align: center; font-size: 16px;
+        }
+        .btn {
+            background: #d4af37; color: #000; padding: 12px 30px;
+            border: none; border-radius: 50px; font-weight: bold;
+            cursor: pointer; font-size: 16px; transition: 0.3s;
+            text-transform: uppercase;
+        }
+        #wish-screen { display: none; }
+        #final-text {
+            font-size: 1.4rem; line-height: 1.8; color: #fff;
+            margin-bottom: 30px; min-height: 180px; text-align: center;
+        }
+        #nextBtn { opacity: 0; transition: 0.5s; } /* Ẩn nút khi đang chạy chữ */
+        .footer-love { color: #d4af37; font-style: italic; margin-top: 25px; }
+    </style>
+</head>
+<body>
 
+    <div id="start-screen" class="container">
+        <h1>GỬI BA KÍNH YÊU ❤️</h1>
+        <p style="color: #ccc;">Con có những lời từ đáy lòng gửi đến Ba...</p>
+        <input type="text" id="nameInput" placeholder="Nhập tên của con...">
+        <br>
+        <button class="btn" onclick="batDau()">GỬI CHO BA</button>
+    </div>
+
+    <div id="wish-screen" class="container">
+        <div id="final-text"></div>
+        <button id="nextBtn" class="btn" onclick="hienCauTiepTheo()">Tiếp tục... ✨</button>
+        <div class="footer-love">Con yêu ba rất nhiều!</div>
+    </div>
+
+    <script>
+        let tenCon = "";
+        let indexCau = 0;
+        let wishes = [];
+        let isTyping = false;
+
+        function batDau() {
+            tenCon = document.getElementById('nameInput').value;
+            if(!tenCon) return alert("Ba cần biết lời chúc từ ai, hãy nhập tên con nhé!");
+
+            wishes = [
+                `Ba ơi, con là ${tenCon} đây. Con biết thời gian qua ba đã vất vả mưu sinh vì gia đình mình. Cảm ơn ba vì đã chưa bao giờ bỏ cuộc.`,
+                `Ba là chiến binh dũng cảm nhất đời con. Những giọt mồ hôi của ba chính là niềm tự hào và động lực để con cố gắng.`,
+                `Dù ngoài kia sóng gió, ba hãy nhớ rằng con luôn ở đây, tin tưởng và ủng hộ ba vô điều kiện.`,
+                `Ba đừng quá áp lực nhé. Con chỉ mong ba giữ gìn sức khỏe. Với con, ba khỏe mạnh là con có tất cả.`,
+                `Sóng gió chỉ làm đôi tay ba thêm vững chãi. Con tin rằng sự kiên trì của ba chắc chắn sẽ sớm hái quả ngọt.`,
+                `Ba hãy vững tin chiến đấu nhé! Con đang lớn khôn từng ngày và sẽ sớm trở thành chỗ dựa cho ba.`,
+                `Ba là người hùng vĩ đại nhất đời con. Chúc ba luôn chân cứng đá mềm, vạn sự bình an!`
+            ];
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('wish-screen').style.display = 'block';
+            hienCauTiepTheo();
+        }
+
+        function hienCauTiepTheo() {
+            if (isTyping) return; // Không cho bấm khi chữ đang chạy
+            if (indexCau >= wishes.length) return location.reload();
+
+            const vungChu = document.getElementById('final-text');
+            const nutBam = document.getElementById('nextBtn');
+            let text = wishes[indexCau];
+            let i = 0;
+            
+            vungChu.innerHTML = "";
+            nutBam.style.opacity = "0";
+            isTyping = true;
+
+            function typeWriter() {
+                if (i < text.length) {
+                    vungChu.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 40); // Tốc độ chạy chữ (40ms)
+                } else {
+                    isTyping = false;
+                    nutBam.style.opacity = "1";
+                    indexCau++;
+                    if(indexCau === wishes.length) nutBam.innerHTML = "Xem lại từ đầu ❤️";
+                }
+            }
+            typeWriter();
+        }
+    </script>
+</body>
+</html>
