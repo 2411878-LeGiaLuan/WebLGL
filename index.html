@@ -25,30 +25,28 @@
             background: #000; color: #fff; text-align: center; font-size: 16px;
         }
         .btn {
-            background: #d4af37; color: #000; padding: 15px 40px;
+            background: #d4af37; color: #000; padding: 12px 30px;
             border: none; border-radius: 50px; font-weight: bold;
-            cursor: pointer; font-size: 18px; transition: 0.3s;
+            cursor: pointer; font-size: 16px; transition: 0.3s;
             text-transform: uppercase;
         }
-        .btn:hover { transform: scale(1.05); background: #f1c40f; }
-        
         #wish-screen { display: none; }
-        
         #final-text {
             font-size: 1.4rem; line-height: 1.8; color: #fff;
-            margin-bottom: 30px; min-height: 150px; text-align: center;
+            margin-bottom: 30px; min-height: 180px; text-align: center;
         }
-        .footer-love { color: #d4af37; font-style: italic; margin-top: 25px; font-size: 1.1rem; }
+        #nextBtn { opacity: 0; transition: 0.5s; } /* Ẩn nút khi đang chạy chữ */
+        .footer-love { color: #d4af37; font-style: italic; margin-top: 25px; }
     </style>
 </head>
 <body>
 
     <div id="start-screen" class="container">
-        <h1 style="font-size: 1.8rem; margin-bottom: 10px;">GỬI BA KÍNH YÊU ❤️</h1>
-        <p style="color: #ccc;">Con có những lời từ đáy lòng muốn gửi đến Ba...</p>
-        <input type="text" id="nameInput" placeholder="Nhập tên của con (ví dụ: Gia Luân)">
+        <h1>GỬI BA KÍNH YÊU ❤️</h1>
+        <p style="color: #ccc;">Con có những lời từ đáy lòng gửi đến Ba...</p>
+        <input type="text" id="nameInput" placeholder="Nhập tên của con...">
         <br>
-        <button class="btn" onclick="batDauTraiNghiem()">GỬI CHO BA</button>
+        <button class="btn" onclick="batDau()">GỬI CHO BA</button>
     </div>
 
     <div id="wish-screen" class="container">
@@ -58,25 +56,23 @@
     </div>
 
     <script>
-        let tenCuaCon = "";
+        let tenCon = "";
         let indexCau = 0;
-        let danhSachLoiChuc = [];
+        let wishes = [];
+        let isTyping = false;
 
-        function batDauTraiNghiem() {
-            tenCuaCon = document.getElementById('nameInput').value;
-            if(!tenCuaCon) {
-                alert("Ba cần biết đây là lời từ ai, nhập tên con nhé!");
-                return;
-            }
+        function batDau() {
+            tenCon = document.getElementById('nameInput').value;
+            if(!tenCon) return alert("Ba cần biết lời chúc từ ai, hãy nhập tên con nhé!");
 
-            danhSachLoiChuc = [
-                `Ba ơi, con là ${tenCuaCon} đây. Con biết thời gian qua ba đã vất vả mưu sinh vì gia đình mình. Cảm ơn ba vì đã chưa bao giờ bỏ cuộc.`,
-                `Ba là chiến binh dũng cảm nhất đời con. Những giọt mồ hôi của ba hôm nay chính là niềm tự hào và động lực lớn nhất để con cố gắng.`,
-                `Dù ngoài kia có sóng gió đến đâu, ba hãy nhớ rằng con luôn ở đây, tin tưởng và ủng hộ ba vô điều kiện.`,
-                `Ba đừng quá áp lực nhé. Con chỉ mong ba giữ gìn sức khỏe. Với con, ba còn khỏe mạnh là con còn tất cả.`,
-                `Sóng gió chỉ làm đôi tay ba thêm vững chãi. Con tin rằng sự kiên trì của ba chắc chắn sẽ sớm hái được quả ngọt.`,
-                `Ba hãy vững tin chiến đấu nhé! Con đang lớn khôn từng ngày và sẽ sớm trở thành chỗ dựa vững chắc cho ba.`,
-                `Lời cuối con muốn nói: Ba là người hùng vĩ đại nhất đời con. Chúc ba luôn chân cứng đá mềm, vạn sự bình an!`
+            wishes = [
+                `Ba ơi, con là ${tenCon} đây. Con biết thời gian qua ba đã vất vả mưu sinh vì gia đình mình. Cảm ơn ba vì đã chưa bao giờ bỏ cuộc.`,
+                `Ba là chiến binh dũng cảm nhất đời con. Những giọt mồ hôi của ba chính là niềm tự hào và động lực để con cố gắng.`,
+                `Dù ngoài kia sóng gió, ba hãy nhớ rằng con luôn ở đây, tin tưởng và ủng hộ ba vô điều kiện.`,
+                `Ba đừng quá áp lực nhé. Con chỉ mong ba giữ gìn sức khỏe. Với con, ba khỏe mạnh là con có tất cả.`,
+                `Sóng gió chỉ làm đôi tay ba thêm vững chãi. Con tin rằng sự kiên trì của ba chắc chắn sẽ sớm hái quả ngọt.`,
+                `Ba hãy vững tin chiến đấu nhé! Con đang lớn khôn từng ngày và sẽ sớm trở thành chỗ dựa cho ba.`,
+                `Ba là người hùng vĩ đại nhất đời con. Chúc ba luôn chân cứng đá mềm, vạn sự bình an!`
             ];
 
             document.getElementById('start-screen').style.display = 'none';
@@ -85,18 +81,31 @@
         }
 
         function hienCauTiepTheo() {
-            const vungHienChu = document.getElementById('final-text');
+            if (isTyping) return; // Không cho bấm khi chữ đang chạy
+            if (indexCau >= wishes.length) return location.reload();
+
+            const vungChu = document.getElementById('final-text');
             const nutBam = document.getElementById('nextBtn');
+            let text = wishes[indexCau];
+            let i = 0;
             
-            if (indexCau < danhSachLoiChuc.length) {
-                vungHienChu.innerHTML = danhSachLoiChuc[indexCau];
-                indexCau++;
-                
-                if(indexCau === danhSachLoiChuc.length) {
-                    nutBam.innerHTML = "Xem lại từ đầu ❤️";
-                    nutBam.onclick = function() { location.reload(); };
+            vungChu.innerHTML = "";
+            nutBam.style.opacity = "0";
+            isTyping = true;
+
+            function typeWriter() {
+                if (i < text.length) {
+                    vungChu.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 40); // Tốc độ chạy chữ (40ms)
+                } else {
+                    isTyping = false;
+                    nutBam.style.opacity = "1";
+                    indexCau++;
+                    if(indexCau === wishes.length) nutBam.innerHTML = "Xem lại từ đầu ❤️";
                 }
             }
+            typeWriter();
         }
     </script>
 </body>
